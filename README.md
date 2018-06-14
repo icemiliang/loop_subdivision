@@ -3,7 +3,7 @@
 
 This package includes the prototype codes for implementing Loop subdivision.
 
-![alt text](data/bunny.png?raw=true "Loop subdivision")
+![alt text](data/bunny.jpg?raw=true "Loop subdivision")
 
 ## Build
 
