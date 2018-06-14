@@ -1,0 +1,14 @@
+Edge.o: Edge.cpp Edge.h HalfEdge.h Point.h Vertex.h Face.h
+Face.o: Face.cpp Face.h HalfEdge.h
+FException.o: FException.cpp FException.h
+HalfEdge.o: HalfEdge.cpp HalfEdge.h 
+OBJFileReader.o: OBJFileReader.cpp OBJFileReader.h SolidDelegate.h StringTokenizer.h
+Parser.o: Parser.cpp Parser.h
+Point.o: Point.cpp Point.h
+Solid.o: Solid.cpp Vertex.h HalfEdge.h Edge.h Face.h Solid.h Iterators.h TopologyException.h \
+	               FException.h FaceNormalTrait.h
+SolidDelegate.o: SolidDelegate.cpp SolidDelegate.h EditTrait.h 
+StringTokenizer.o: StringTokenizer.cpp StringTokenizer.h 
+TopologyException.o: TopologyException.cpp TopologyException.h
+Trait.o: Trait.cpp Trait.h
+Vertex.o: Vertex.cpp Vertex.h HalfEdge.h
