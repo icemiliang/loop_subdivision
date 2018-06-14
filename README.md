@@ -17,7 +17,6 @@ $ make
 ```
 ./subdiv input.obj output.obj
 ```
-Output files are compatible with Gnuplot. A sample Gnuplot script (gnuplotScripts.txt) is also provided in demo/. If you are using the sample files, the script should plot the picture above.
 
 ## Contact
 Please contact Liang Mi icemiliang@gmail.com for any issues. 
