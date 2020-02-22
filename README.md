@@ -11,7 +11,11 @@ This package includes the prototype codes for implementing Loop subdivision.
 
 In the root directory, run:
 ```
-$ make clean && make
+$ rm -r build
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
 ```
 
 ## Usage
