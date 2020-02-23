@@ -1,5 +1,4 @@
 # Loop subdivision
-## A C++ implementation of the Loop subdivision algorithm 
 
 This package includes the prototype codes for implementing Loop subdivision.
 
@@ -20,8 +19,8 @@ $ make
 
 ## Usage
 ```
-./subdiv input.obj output.obj
+./main ../data/bunny.obj output.obj
 ```
 
 ## Contact
-Please contact Liang Mi icemiliang@gmail.com for any issues. 
+Please contact Liang Mi icemiliang@gmail.com for any issues, or create an issue for reporting bugs, requesting additional features, etc.
