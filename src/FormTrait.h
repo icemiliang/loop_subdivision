@@ -22,7 +22,7 @@ namespace MeshLib {
 		int m_index;
 		int m_valence;
 		Point2 m_uv;
-		Vertex* m_father;
+		Vertex* m_vertex;
 		bool m_touched;
 		VertexTrait() { m_index = 0; m_valence = 0; m_touched = false; };
 		~VertexTrait() {};
@@ -68,9 +68,9 @@ namespace MeshLib {
 		return pVT->m_touched;
 	}
 
-	inline Vertex* & v_father(Vertex* v) {
+	inline Vertex* & v_v(Vertex* v) {
 		VertexTrait * pVT = (VertexTrait*)v->trait();
-		return pVT->m_father;
+		return pVT->m_vertex;
 	}
 
 

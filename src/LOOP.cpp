@@ -30,7 +30,7 @@ float LOOP::calculateAlpha(int n){
 
 void LOOP::subdivide() {
 	// scan all vertices and update its coordinates
-	std::cout << "--> Creating new vertices..." << std::endl;
+
 	int vid = 0;
 	for (MeshVertexIterator viter(m_mesh1); !viter.end(); ++viter){
 		Vertex *v = *viter;
@@ -80,7 +80,7 @@ void LOOP::subdivide() {
 			// assign value
 			vNew->point() = v->point() * (1 - n * alpha) + temp * alpha;
 		}
-
+		v_v(v) = vNew;
 	}
 
 	// scan all edges and create vertex on each edge
@@ -105,7 +105,7 @@ void LOOP::subdivide() {
 	} 
 
 	// Create new faces
-	std::cout << "--> Creating new faces..." << std::endl;
+
 	int fid = 0;
 	for (MeshFaceIterator fiter(m_mesh1); !fiter.end(); ++fiter){
 		Face *f = *fiter;
@@ -115,17 +115,16 @@ void LOOP::subdivide() {
 		fhe[2] = fhe[1]->he_next();
 
 		Vertex * v[3];
-
+	
 		// create the central small triangle
 		for (int i = 0; i < 3; i++){
 			v[i] = e_v(fhe[i]->edge());
 		}
-
 		m_mesh2->create_face(v, ++fid);
 
 		// create small triangles in three corners
 		for (int i = 0; i < 3; i++){
-			v[0] = m_mesh2->id_vertex(fhe[i]->source()->id());
+			v[0] = v_v(fhe[i]->source());
 			v[1] = e_v(fhe[i]->edge());
 			v[2] = e_v(fhe[(i + 2 ) % 3]->edge());
 			m_mesh2->create_face(v, ++fid);
