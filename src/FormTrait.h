@@ -1,3 +1,10 @@
+// loop-subdivision
+//
+// Author   : Mi, Liang (Arizona State University)
+// Email    : icemiliang@gmail.com
+// Date     : Feb 22nd 2020
+// License  : MIT
+
 #ifndef  _FORMTRAIT_H_
 #define  _FORMTRAIT_H_
 

@@ -1,5 +1,12 @@
-#ifndef _MESHLIB_MESH_H_
-#define _MESHLIB_MESH_H_
+// loop-subdivision
+//
+// Author   : Mi, Liang (Arizona State University)
+// Email    : icemiliang@gmail.com
+// Date     : Feb 22nd 2020
+// License  : MIT
+
+#ifndef _MESH_H_
+#define _MESH_H_
 
 #define MAX_LINE 2048
 

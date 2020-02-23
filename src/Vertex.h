@@ -1,5 +1,12 @@
-#ifndef _MESHLIB_VERTEX_H_
-#define _MESHLIB_VERTEX_H_
+// loop-subdivision
+//
+// Author   : Mi, Liang (Arizona State University)
+// Email    : icemiliang@gmail.com
+// Date     : Feb 22nd 2020
+// License  : MIT
+
+#ifndef _VERTEX_H_
+#define _VERTEX_H_
 
 #include <cassert>
 #include <cmath>

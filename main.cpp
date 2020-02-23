@@ -2,11 +2,8 @@
 //
 // Author   : Mi, Liang (Arizona State University)
 // Email    : icemiliang@gmail.com
-// Date     : June 13th 2018
-
-// #include <fstream>
-// #include <vector>
-// #include <cmath>
+// Date     : Feb 22nd 2020
+// License  : MIT
 
 #include "Mesh.h"
 #include "Iterators.h"

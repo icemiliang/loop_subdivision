@@ -1,3 +1,10 @@
+// loop-subdivision
+//
+// Author   : Mi, Liang (Arizona State University)
+// Email    : icemiliang@gmail.com
+// Date     : Feb 22nd 2020
+// License  : MIT
+
 #ifndef _TRAIT_H_
 #define _TRAIT_H_
 #include <string>
