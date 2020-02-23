@@ -6,22 +6,23 @@
 
 #include "Mesh.h"
 #include "Iterators.h"
+#include "FormTrait.h"
 
 
 namespace MeshLib {
 
 class LOOP {
 public:
-	LOOP(Mesh *mesh);
+	LOOP(Mesh *mesh1, Mesh *mesh2);
 	~LOOP();
-
-	float calculateAlpha(int n);
 
 	void subdivide();
 
 protected:
-	Mesh *m_mesh;
-	std::vector<Vertex*> m_fix_vertices;
+	float calculateAlpha(int n);
+
+	Mesh *m_mesh1;
+	Mesh *m_mesh2;
 };
 
 }

@@ -85,7 +85,15 @@ namespace MeshLib {
 		std::list<Face*> &faces() { return m_faces; };
 		std::list<Vertex*> &vertices() { return m_vertices; };
 
+		Vertex *create_vertex(int id);
+		Edge *create_edge(Vertex *v1, Vertex *v2);
+		Face *create_face(Vertex *v[], int id);
+
+
 	protected:
+		void label_boundary();
+		void clean_vertex();
+
 		std::list<Edge*> m_edges;
 		std::list<Face*> m_faces;
 		std::list<Vertex*> m_vertices;
@@ -94,11 +102,6 @@ namespace MeshLib {
 		std::map<int, Face*> m_map_face;
 		std::map<EdgeKey, Edge*> m_map_edge;
 		// std::map<int, Edge> m_map_edge;
-	    
-	protected:
-		Vertex *create_vertex(int id);
-		Edge *create_edge(Vertex *v1, Vertex *v2);
-		Face *create_face(Vertex *v[], int id);
 	};
 }
 

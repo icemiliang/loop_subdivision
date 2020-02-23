@@ -265,6 +265,12 @@ int Mesh::read_obj(const char * filename) {
 	}
 	fclose(f);
 
+	label_boundary();
+	
+	return 0;
+}
+
+void Mesh::label_boundary() {
 	//Label boundary edges
 	for (std::list<Edge*>::iterator eiter = m_edges.begin(); eiter != m_edges.end(); ++eiter) {
 		Edge     *edge = *eiter;
@@ -291,21 +297,9 @@ int Mesh::read_obj(const char * filename) {
 		}
 	}
 
-	std::list<Vertex*> dangling_verts;
-	//Label boundary vertices
-	for (std::list<Vertex*>::iterator viter = m_vertices.begin(); viter != m_vertices.end(); ++viter) {
-		Vertex     *v = *viter;
-		if (v->halfedge() != NULL) continue;
-		dangling_verts.push_back(v);
-	}
 
-	for (std::list<Vertex*>::iterator viter = dangling_verts.begin(); viter != dangling_verts.end(); ++viter) {
-		Vertex *v = *viter;
-		m_vertices.remove(v);
-		delete v;
-		v = NULL;
-	}
-
+	clean_vertex();
+	
 	//Arrange the boundary half_edge of boundary vertices, to make its halfedge
 	//to be the most ccw in half_edge
 
@@ -320,7 +314,23 @@ int Mesh::read_obj(const char * filename) {
 
 		v->halfedge() = he;
 	}
-	return 0;
+}
+
+void Mesh::clean_vertex() {
+	// Remove isolated vertices
+	std::list<Vertex*> dangling_verts;
+	for (std::list<Vertex*>::iterator viter = m_vertices.begin(); viter != m_vertices.end(); ++viter) {
+		Vertex *v = *viter;
+		if (v->halfedge() != NULL) continue;
+		dangling_verts.push_back(v);
+	}
+
+	for (std::list<Vertex*>::iterator viter = dangling_verts.begin(); viter != dangling_verts.end(); ++viter) {
+		Vertex *v = *viter;
+		m_vertices.remove(v);
+		delete v;
+		v = NULL;
+	}
 }
 
 Face *Mesh::create_face(Vertex * v[], int id) {

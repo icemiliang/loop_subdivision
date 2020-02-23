@@ -8,8 +8,9 @@
 
 using namespace MeshLib;
 
-LOOP::LOOP(Mesh * mesh) {
-	m_mesh = mesh;
+LOOP::LOOP(Mesh * mesh1, Mesh *mesh2) {
+	m_mesh1 = mesh1;
+	m_mesh2 = mesh2;
 }
 
 LOOP::~LOOP(){}
@@ -28,107 +29,100 @@ float LOOP::calculateAlpha(int n){
 }
 
 void LOOP::subdivide() {
-	// 	std::cout << "--> Reading mesh..." << std::endl;
-	// // Read in the obj file
-	// Mesh mesh; // old mesh
-	// OBJFileReader of;
-	// std::ifstream in(argv[1]);
-	// of.readToMesh(&mesh, in);
+	int vid = 0;
+	int fid = 0;
 
-	// LOOP loop(&mesh);
+	// scan all vertices and update its coordinates
+	for (MeshVertexIterator viter(m_mesh1); !viter.end(); ++viter){
+		Vertex *v = *viter;
+		Vertex *vNew = m_mesh2->create_vertex(++vid);
 
-	// Mesh mesh2; // new mesh
-	// int vid = 0;
-	// int fid = 0;
-	// MeshDelegate MeshHelper;
+		// Crease
+		// boundary
+		if (v->boundary()) {
+			//vNew->point() = v->point(); // simplest way
+			std::vector <Point > plist;
+			HalfEdge *he = v->halfedge();
 
-	// std::cout << "--> Creating new vertices..." << std::endl;
+			if (he->edge()->boundary()){
+				// find second most clw neighbour
+				do {
+					he = he->clw_rotate_about_target();
+				} 
+				while (he->clw_rotate_about_target());
+				
+				if (he == he->edge()->halfedge(0)){
+					he = he->edge()->halfedge(1);
+				}
+				else if (he == he->edge()->halfedge(1)){
+					he = he->edge()->halfedge(0);
+				}
 
-	// // scan all vertices and update its coordinates
-	// for ( MeshVertexIterator viter(&mesh); !viter.end(); ++viter){
-	// 	Vertex *v = *viter;
-	// 	Vertex *vNew = MeshHelper.createVertex(&mesh2, ++vid);
+				//find most clw neighbour
+				he = he->clw_rotate_about_source();
 
-	// 	// Crease
-	// 	// boundary
-	// 	if (v->boundary()){
-	// 		//vNew->point() = v->point(); // simplest way
-	// 		std::vector <Point > plist;
-	// 		HalfEdge *he = v->halfedge();
+				// assign new value
+				vNew->point() = v->point() * 0.75f + (v->halfedge()->source()->point() + he->target()->point()) * 0.125f;
+			}
+			else {
+				// find most ccw neighbour
+				do { 
+					he = he->ccw_rotate_about_target();
+					plist.push_back(he->source()->point()); 
+				} 
+				while (!he->edge()->boundary());
 
-	// 		if (he->edge()->boundary()){
-	// 			// find second most clw neighbour
-	// 			do {
-	// 				he = he->clw_rotate_about_target();
-	// 			} while (he->clw_rotate_about_target());
-	// 			if (he == he->edge()->halfedge(0)){
-	// 				he = he->edge()->halfedge(1);
-	// 			}
-	// 			else if (he == he->edge()->halfedge(1)){
-	// 				he = he->edge()->halfedge(0);
-	// 			}
+				vNew->point() = v->point() * 0.75f + plist.back() * 0.125f;
 
-	// 			//find most clw neighbour
-	// 			he = he->clw_rotate_about_source();
+				// find second most clw neighbour
+				do { 
+					he = he->clw_rotate_about_target();
+					plist.push_back(he->source()->point()); 
+				} 
+				while (he->clw_rotate_about_target());
 
-	// 			// assign new value
-	// 			vNew->point() = v->point()*3/4 + (v->halfedge()->source()->point() + he->target()->point())/8;
-	// 		}
-	// 		else{
-	// 			// find most ccw neighbour
-	// 			do { 
-	// 				he = he->ccw_rotate_about_target();
-	// 				plist.push_back(he->source()->point()); 
-	// 			} while (!he->edge()->boundary());
-	// 			vNew->point() = v->point() * 3.0f / 4.0f + plist.back() / 8.0f;
+				if (he == he->edge()->halfedge(0)){
+					he = he->edge()->halfedge(1);
+				}
+				else if (he == he->edge()->halfedge(1)){
+					he = he->edge()->halfedge(0);
+				}
 
-	// 			// find second most clw neighbour
-	// 			do { 
-	// 				he = he->clw_rotate_about_target();
-	// 				plist.push_back(he->source()->point()); 
-	// 			} while (he->clw_rotate_about_target());
-	// 			if (he == he->edge()->halfedge(0)){
-	// 				he = he->edge()->halfedge(1);
-	// 			}
-	// 			else if (he == he->edge()->halfedge(1)){
-	// 				he = he->edge()->halfedge(0);
-	// 			}
+				//find most clw neighbour
+				he = he->clw_rotate_about_source();
 
-	// 			//find most clw neighbour
-	// 			he = he->clw_rotate_about_source();
+				// update new value
+				vNew->point() = vNew->point() + he->target()->point() * 0.125f;
+			}
+		}
+		else{
+			// // examine all neighboring vertices
+			// std::vector <Point > plist;
+			// HalfEdge *he = v->halfedge();
 
-	// 			// update new value
-	// 			vNew->point() = vNew->point() + he->target()->point() / 8.0f;
-	// 		}
-	// 	}
-	// 	else{
-	// 		// examine all neighboring vertices
-	// 		std::vector <Point > plist;
-	// 		HalfEdge *he = v->halfedge();
+			// int n = 0;
 
-	// 		int n = 0;
+			// // clw rotate
+			// do {
+			// 	plist.push_back(he->source()->point()); // save point
+			// 	he = he->clw_rotate_about_target();
+			// 	n++;
+			// } while (he != v->halfedge());
 
-	// 		// clw rotate
-	// 		do {
-	// 			plist.push_back(he->source()->point()); // save point
-	// 			he = he->clw_rotate_about_target();
-	// 			n++;
-	// 		} while (he != v->halfedge());
+			// float alpha = loop.calculateAlpha(n);
+			// // float alpha = calculateAlpha(n);
 
-	// 		float alpha = loop.calculateAlpha(n);
-	// 		// float alpha = calculateAlpha(n);
-
-	// 		Point temp = { 0.0f, 0.0f, 0.0f };
-	// 		for (int i = 0; i < n; i++){
-	// 			temp += plist.back();
-	// 			plist.pop_back();
-	// 		}
-	// 		// assign value
-	// 		vNew->point() = v->point() *(1 - n*alpha) + temp.operator*(alpha);
-	// 	}
+			// Point temp = { 0.0f, 0.0f, 0.0f };
+			// for (int i = 0; i < n; i++){
+			// 	temp += plist.back();
+			// 	plist.pop_back();
+			// }
+			// // assign value
+			// vNew->point() = v->point() *(1 - n*alpha) + temp.operator*(alpha);
+		}
 		
-	// 	v->vertexForSub() = vNew; // added a new trait in vertex.h
-	// }
+		// v->vertexForSub() = vNew; // added a new trait in vertex.h
+	}
 
 	// // scan all edges and create vertex on each edge
 	// MeshEdgeIterator eiter(&mesh);
