@@ -1,184 +1,78 @@
 #ifndef _TRAIT_H_
 #define _TRAIT_H_
-#include <typeinfo>
 #include <string>
 #include <iterator>
-#include <iostream>
-#include <exception>
-#include "Point.h"
-#include "StringTokenIterator.h"
 
+namespace MeshLib{
 
-namespace MeshLib
-{
-
-//!  Trait class. 
-/*!
-  This class define trait for Edge, Halfedge, Vertex and Face.
-*/
-class Trait 
+struct string_token_iterator
+	: public std::iterator<std::input_iterator_tag, std::string>
 {
 public:
-	//!  Constructor.
-	Trait(){ m_next = NULL; };
-	//!  Destructor.
-	virtual ~Trait(){ };
-
-	//!  Get trait string.
-    /*!      
-      \return string of this trait.
-    */
-	std::string & string() { return m_string;};
-	//!  Read trait (virtual).
-	virtual void read() {};
-	//!  Write trait (virtual).
-	virtual void write(){};
-
-	//!  Get next trait.
-    /*!      
-      \return next trait.
-    */
-	Trait * & next() { return m_next; };
-
-	//!  Add a new trait.
-    /*!      
-      \param t a new trait to be added.
-    */
-	void add( Trait * t )
+	string_token_iterator() : str(0), start(0), end(0) {}
+	string_token_iterator(const std::string & str_, const char * separator_ = " ") :
+		separator(separator_),
+		str(&str_),
+		end(0)
 	{
-		Trait *  pt = this;
-		while( pt->next() != NULL ) pt = pt->next();
-		pt->next() = t;
-	};
+		find_next();
+	}
+	string_token_iterator(const string_token_iterator & rhs) :
+		separator(rhs.separator),
+		str(rhs.str),
+		start(rhs.start),
+		end(rhs.end)
+	{
+	}
 
-	//!  Clear trait (static).
-    /*!      
-      \param tT the trait to be clear.
-    */
-	static void clear( Trait * & pT );
-	
-	static void updateTraitString(std::string &traitString, std::string &traitName, std::string &traitValue);
-	static std::string getTraitValue(std::string &traitString, std::string &traitName);
-	static Point getUV(std::string s);
-	static Point getConformal(std::string s);
-	static void updateUV(std::string &traitString, Point p);
+	string_token_iterator & operator++() {
+		find_next();
+		return *this;
+	}
 
-protected:
-	//!  Trait string.
-	std::string m_string;   //string
-	//!  Trait next trait.
-	Trait * m_next;
+	string_token_iterator operator++(int) {
+		string_token_iterator temp(*this);
+		++(*this);
+		return temp;
+	}
 
+	std::string operator*() const {
+		return std::string(*str, start, end - start);
+	}
+
+	bool operator==(const string_token_iterator & rhs) const {
+		return (rhs.str == str && rhs.start == start && rhs.end == end);
+	}
+
+	bool operator!=(const string_token_iterator & rhs) const {
+		return !(rhs == *this);
+	}
+
+private:
+
+	void find_next(void) {
+		start = str->find_first_not_of(separator, end);
+		if (start == std::string::npos) {
+			start = end = 0;
+			str = 0;
+			return;
+		}
+
+		end = str->find_first_of(separator, start);
+	}
+
+	const char * separator;
+	const std::string * str;
+	std::string::size_type start;
+	std::string::size_type end;
 };
 
-//!  Get matched trait.
-/*!      
-  \param v the object to be checked if the type is the same as expect.
-*/
-template <typename T, typename V>
-T * pTrait( V * v )
-{
-	Trait * pt = v->trait();
-	while( pt != NULL )
-	{
-		T *t = dynamic_cast<T*> (pt);
-		if (t)
-			return t;
-		//if( typeid(*pt) == typeid(T) )
-		//	return (T*)pt;
-		pt = pt->next();
-	}
-	return NULL;
+class Trait {
+public:
+	Trait(){};
+	~Trait(){};
+};
+
 }
 
-//!  Get matched trait (None NULL return).
-/*!      
-  \param v the object to be checked if the type is the same as expect.
-*/
-template <typename T, typename V>
-T & trait( V * v )
-{
-	Trait * pt = v->trait();
-	while( pt != NULL )
-	{
-		T *t = dynamic_cast<T*>(pt);
-		if(t)
-			return *t;
-		//if( typeid(*pt) == typeid(T) )
-		//	return *((T*)pt);
-		pt = pt->next();
-	}
-	throw std::bad_cast();
-	return *((T*)v->trait());
-}
-
-//!  Add a new trait.
-/*!      
-  \param v the object to be added trait.
-  \param t the temp trait to be added.
-*/
-template <typename T, typename V>
-void add_trait( V * v, T * t )
-{
-	t->next() = v->trait();
-	v->trait() = ( Trait* ) t;
-}
-
-//!  Delet trait.
-/*!      
-  \param v the object to be delete trait.
-  \param t the temp trait to be add
-*/
-template <typename T, typename V>
-void del_trait( V * v, T* t )
-{
-	if( t == NULL ) return;
-
-	Trait * pT = v->trait();
-	while( pT != NULL )
-	{
-		//TRACE("%s ", pT->GetRuntimeClass()->m_ClassName );
-		pT = pT->next();
-	}
-	//TRACE("\n");
-
-	if( v->trait() == NULL ) return;
-
-	//TRACE("\nTemplate %s \n", t->GetRuntimeClass()->m_ClassName );
-
-	Trait * pt = v->trait();
-
-	if( pt == t )
-	{
-		v->trait() = pt->next();
-		delete (T*)pt;
-		pt = NULL;
-		return;
-	}
-
-	while( pt->next() != NULL )
-	{
-		if( pt->next() == t ) break;
-		pt = pt->next();
-	}
-
-	if( pt->next() == NULL ) return;
-
-	Trait * pnt = pt->next();
-	pt->next() = pnt->next();
-	delete (T*)pnt;
-	pnt = NULL;
-}
-
-//!  Clear all trait(s).
-/*!      
-  \param tT the trait list to be clear.
-*/
-//recursively clean all the trait in the trait list pT
-// void clear_trait( Trait * & pT ) {
-
-// }
-
-
-} //end of meshlib
 #endif

@@ -1,226 +1,88 @@
 #ifndef _MESHLIB_POINT_H_
-
 #define _MESHLIB_POINT_H_
 
+#include <cassert>
+#include <cmath>
 
+namespace MeshLib  {
+	class Point {
+	public:
+		Point(double x, double y, double z) { m_v[0] = x; m_v[1] = y; m_v[2] = z; };
+		Point() { m_v[0] = m_v[1] = m_v[2] = 0; };
+		~Point() {};
 
-#include <iostream>
-#include <stdexcept>
+		double &operator[](int i)       { assert(0 <= i && i < 3); return m_v[i]; };
+		double  operator()(int i) const { assert(0 <= i && i < 3); return m_v[i]; };
+		double  operator[](int i) const { assert(0 <= i && i < 3); return m_v[i]; };
 
-#include <math.h>
+		// l2-norm
+		double norm() const { return sqrt(m_v[0] * m_v[0] + m_v[1] * m_v[1] + m_v[2] * m_v[2]); };
+		// lp-norm
+		double norm(int i) const { return pow(pow(m_v[0], i) + pow(m_v[1], i) + pow(m_v[2], i), 1 / double(i)); };
 
+		Point &operator += (const Point &p) { m_v[0] += p[0]; m_v[1] += p[1]; m_v[2] += p[2]; return *this; };
+		Point &operator -= (const Point &p) { m_v[0] -= p[0]; m_v[1] -= p[1]; m_v[2] -= p[2]; return *this; };
+		Point &operator *= (const double s) { m_v[0] *= s;    m_v[1] *= s;    m_v[2] *= s;    return *this; };
+		Point &operator /= (const double s) { m_v[0] /= s;    m_v[1] /= s;    m_v[2] /= s;    return *this; };
 
-
-namespace MeshLib{
-
-
-
-class Point{
-
-
-
-public:
-	Point rotate(double theta, Point vector);
-
-	Point( double x, double y, double z ){ v[0] = x; v[1] = y; v[2] = z;};
-
-	Point() { v[0] = v[1] = v[2] = 0; };
-
-	~Point(){};
-
-
-
-	double & operator[]( int i)		  
-
-	{ 
-
-		if( 0>i || i>=3 ) throw std::out_of_range("invalid index for point coordinates"); 
-
-		return v[i]; 
-
+		Point operator+(const Point &p) const { Point np(m_v[0] + p[0], m_v[1] + p[1], m_v[2] + p[2]); return np; };
+		Point operator-(const Point &p) const { Point np(m_v[0] - p[0], m_v[1] - p[1], m_v[2] - p[2]); return np; };
+		// Point operator*(const Point &p) const { Point np(m_v[0] * p[0], m_v[1] * p[1], m_v[2] * p[2]); return np; };
+		Point operator*(const double s) const { Point np(m_v[0] * s, m_v[1] * s, m_v[2] * s); return np; };
+		Point operator/(const double s) const { Point np(m_v[0] / s, m_v[1] / s, m_v[2] / s); return np; };
+		Point operator-() const { Point p(-m_v[0], -m_v[1], -m_v[2]); return p; };
+		Point operator^(const Point & p) const {
+			Point np(m_v[1] * p[2] - m_v[2] * p[1],
+				  m_v[2] * p[0] - m_v[0] * p[2],
+				  m_v[0] * p[1] - m_v[1] * p[0]);
+			return np;
+		};
+		double operator *(const Point &p) const { return m_v[0] * p[0] + m_v[1] * p[1] + m_v[2] * p[2]; };
+		
+		bool operator == (const Point &p) const { return (m_v[0] == p[0] && m_v[1] == p[1] && m_v[2] == p[2]); };
+		// bool operator <(const Point &p) const {}
+		// angle between v and p
+		double angle(Point &p) { return acos((*this) * p / (norm() * p.norm())); };
+		double x(){ return m_v[0]; };
+		double y(){ return m_v[1]; };
+		double z(){ return m_v[2]; };
+	private:
+		double m_v[3];
 	};
 
-	double   operator()( int i) const
+	class Point2 {
+	public:
+		Point2(double x, double y) { m_v[0] = x; m_v[1] = y; };
+		Point2(const Point2 &p) { m_v[0] = p[0]; m_v[1] = p[1]; };
+		Point2(){ m_v[0] = m_v[1] = 0; };
+		~Point2(){};
 
-	{ 
+		double &operator[](int i)       { assert(0 <= i && i < 2); return m_v[i]; };
+		double  operator()(int i) const { assert(0 <= i && i < 2); return m_v[i]; };
+		double  operator[](int i) const { assert(0 <= i && i < 2); return m_v[i]; };
+		bool operator == (const Point2 &p) { return (m_v[0] == p[0] && m_v[1] == p[1]); };
+		// l2-norm
+		double norm() const { return sqrt(m_v[0] * m_v[0] + m_v[1] * m_v[1]); };
+		// lp-norm
+		double norm(int i) const { return pow(pow(m_v[0], i) + pow(m_v[1], i), 1 / double(i)); };
 
-		if( 0>i || i>=3 ) throw std::out_of_range("invalid index for point coordinates");
+		Point2 &operator += (const Point2 &p) { m_v[0] += p[0]; m_v[1] += p[1]; return *this; };
+		Point2 &operator -= (const Point2 &p) { m_v[0] -= p[0]; m_v[1] -= p[1]; return *this; };
+		Point2 &operator *= (const double s) { m_v[0] *= s;    m_v[1] *= s;    return *this; };
+		Point2 &operator /= (const double s) { m_v[0] /= s;    m_v[1] /= s;    return *this; };
 
-		return v[i]; 
+		Point2 operator+(const Point2 &p) const { Point2 np(m_v[0] + p[0], m_v[1] + p[1]); return np; };
+		Point2 operator-(const Point2 &p) const { Point2 np(m_v[0] - p[0], m_v[1] - p[1]); return np; };
+		// Point operator*(const Point &p) const { Point np(m_v[0] * p[0], m_v[1] * p[1]); return np; };
+		Point2 operator*(const double s) const { Point2 np(m_v[0] * s, m_v[1] * s); return np; };
+		Point2 operator/(const double s) const { Point2 np(m_v[0] / s, m_v[1] / s); return np; };
+		Point2 operator-() const { Point2 p(-m_v[0], -m_v[1]); return p; };
+		//Point2 operator^(const Point2 & p) const { };
+		double operator *(const Point2 &p) const { return m_v[0] * p[0] + m_v[1] * p[1]; };
 
+	private:
+		double m_v[2]; 
 	};
+}
 
-	double   operator[]( int i) const 
-
-	{
-
-		if( 0>i || i>=3 ) throw std::out_of_range("invalid index for point coordinates");
-
-		return v[i]; 
-
-	};
-
-	double norm() const { return sqrt( fabs( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] ) ); };
-
-	double norm2() const { return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];};
-
-	Point  & operator += ( const Point & p) { v[0] += p(0); v[1] += p(1); v[2] += p(2); return *this; }; 
-
-	Point  & operator -= ( const Point & p) { v[0] -= p(0); v[1] -= p(1); v[2] -= p(2); return *this; };
-
-	Point  & operator *= ( const double  s) { v[0] *= s   ; v[1] *=    s; v[2] *=    s; return *this; };
-
-	Point  & operator /= ( const double  s) { v[0] /= s   ; v[1] /=    s; v[2] /=    s; return *this; };
-
-
-
-	double   operator*( const Point & p ) const 
-
-	{
-
-		return v[0] * p[0] + v[1] * p[1] + v[2] * p[2]; 
-
-	};
-
-
-
-	Point   operator+( const Point & p  ) const
-
-	{
-
-		Point r( v[0] + p[0], v[1] + p[1], v[2] + p[2] );
-
-		return r;
-
-	};
-
-	Point   operator-( const Point & p  ) const
-
-	{
-
-		Point r( v[0] - p[0], v[1] - p[1], v[2] - p[2] );
-
-		return r;
-
-	};
-
-	Point   operator*( const double s  ) const
-
-	{
-
-		Point r( v[0] * s, v[1] * s, v[2] * s );
-
-		return r;
-
-	};
-
-	Point   operator/( const double s  ) const
-
-	{
-
-		Point r( v[0] / s, v[1] / s, v[2] / s );
-
-		return r;
-
-	};
-
-
-
-	Point operator^( const Point & p2) const
-
-	{
-
-		Point r( v[1] * p2[2] - v[2] * p2[1],
-
-			     v[2] * p2[0] - v[0] * p2[2],
-
-		         v[0] * p2[1] - v[1] * p2[0]);
-
-		return r;
-
-	};
-
-
-
-	Point operator-() const
-
-	{
-
-		Point p(-v[0],-v[1],-v[2]);
-
-		return p;
-
-	};
-
-
-
-	bool operator == (const Point & p)									
-
-	{												
-
-		return (v[0] == p(0) && v[1] == p(1) && v[2] == p(2));
-
-	};
-
-
-
-	bool operator< (const Point & p) 
-
-	{
-
-		bool returnValue = false;
-
-
-
-		if( v[0] < p(0) ) returnValue = true;
-
-		else if( v[0] == p[0])
-
-		{
-
-			if( v[1] < p(1) ) returnValue = true;
-
-			else if( v[1] == p(1))
-
-			{
-
-				if( v[2] < p(2)) returnValue = true;
-
-				else returnValue = false;
-
-			}
-
-			else returnValue = false;
-
-		}
-
-		else returnValue = false;
-
-
-
-		return returnValue;
-
-	};
-
-		//Use this when treating the points as vectors
-	double angleBetween(Point &p2)
-	{
-		return acos( (*this) * p2 / norm() * p2.norm() );
-	}
-
-protected:
-
-	double v[3];
-
-};
-
-
-
-std::ostream & operator<<( std::ostream & os, const Point & p);
-
-
-}//name space MeshLib
-
-
-
-#endif //_MESHLIB_POINT_H_ defiined
+#endif

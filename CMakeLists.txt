@@ -4,6 +4,12 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(src)
 
-set(SOURCES src/Edge.cpp src/Face.cpp src/FException.cpp src/HalfEdge.cpp src/OBJFileReader.cpp src/Parser.cpp src/Point.cpp src/Solid.cpp src/SolidDelegate.cpp src/StringTokenizer.cpp src/TopologyException.cpp src/Trait.cpp src/Vertex.cpp)
+# Include the Eigen library
+include_directories(eigen3)
+#find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+#include_directories(${EIGEN3_INCLUDE_DIR})
+
+set(SOURCES src/Boundary.cpp src/Edge.cpp src/Face.cpp src/FormTrait.cpp src/LOOP.cpp
+            src/HalfEdge.cpp src/Mesh.cpp src/Vertex.cpp)
 
 add_executable(main main.cpp ${SOURCES})
