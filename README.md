@@ -7,6 +7,7 @@ This package includes the prototype codes for implementing Loop subdivision.
 ## Build
 [![Build status](https://ci.appveyor.com/api/projects/status/xh035nmdsm39t6j5?svg=true)](https://ci.appveyor.com/project/icemiliang/loop-subdiv)
 
+The program has been tested on Ubuntu 16.04 with g++ 5.4.0.
 
 In the root directory, run:
 ```
