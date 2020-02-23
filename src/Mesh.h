@@ -89,9 +89,10 @@ namespace MeshLib {
 		Edge *create_edge(Vertex *v1, Vertex *v2);
 		Face *create_face(Vertex *v[], int id);
 
+		void refine_halfedge_structure();
 
 	protected:
-		void label_boundary();
+		
 		void clean_vertex();
 
 		std::list<Edge*> m_edges;

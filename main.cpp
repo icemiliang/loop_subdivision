@@ -10,6 +10,7 @@
 
 #include "Mesh.h"
 #include "Iterators.h"
+#include "FormTrait.h"
 #include "LOOP.h"
 #include <iostream>
  
@@ -21,9 +22,11 @@ int main(int argc, char *argv[]) {
     Mesh mesh1;
     mesh1.read_obj(argv[1]);
 
-    // FormTrait traits(&mesh1);
+    
 
     Mesh mesh2;
+
+	FormTrait traits(&mesh1);
 
     std::cout << "--> Subdviding mesh..." << std::endl;
     LOOP loop(&mesh1, &mesh2);

@@ -265,12 +265,12 @@ int Mesh::read_obj(const char * filename) {
 	}
 	fclose(f);
 
-	label_boundary();
+	refine_halfedge_structure();
 	
 	return 0;
 }
 
-void Mesh::label_boundary() {
+void Mesh::refine_halfedge_structure() {
 	//Label boundary edges
 	for (std::list<Edge*>::iterator eiter = m_edges.begin(); eiter != m_edges.end(); ++eiter) {
 		Edge     *edge = *eiter;
@@ -299,12 +299,12 @@ void Mesh::label_boundary() {
 
 
 	clean_vertex();
-	
+
 	//Arrange the boundary half_edge of boundary vertices, to make its halfedge
 	//to be the most ccw in half_edge
 
 	for (std::list<Vertex*>::iterator viter = m_vertices.begin(); viter != m_vertices.end(); ++viter) {
-		Vertex     *v = *viter;
+		Vertex *v = *viter;
 		if (!v->boundary()) continue;
 
 		HalfEdge * he = v->halfedge();

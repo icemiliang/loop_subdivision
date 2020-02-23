@@ -30,6 +30,7 @@ namespace MeshLib {
 
 	class EdgeTrait : public  Trait {
 	public:
+		Vertex * m_vertex;
 		double m_length;
 		double m_weight;
 		int m_mark;
@@ -106,6 +107,11 @@ namespace MeshLib {
 	inline std::string & e_string(Edge* e) {
 		EdgeTrait * pET = (EdgeTrait*)e->trait();
 		return pET->m_string;
+	}
+
+	inline Vertex* & e_v(Edge* e) {
+		EdgeTrait * pET = (EdgeTrait*)e->trait();
+		return pET->m_vertex;
 	}
 
 	inline HalfEdge* & c_next(HalfEdge * c) {
