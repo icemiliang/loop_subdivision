@@ -44,6 +44,8 @@ void LOOP::subdivide() {
 
 		// Crease
 		if (v->boundary()) {
+			//vNew->point() = v->point(); // Linear, blow is quadratic
+
 			std::vector <Point > plist;
 			
 			// find most clw neighbor
