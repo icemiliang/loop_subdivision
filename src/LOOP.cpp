@@ -12,8 +12,8 @@
 #include <iostream>
 #include <sstream>
 
-
 using namespace MeshLib;
+
 
 LOOP::LOOP(Mesh * mesh1, Mesh *mesh2) {
 	m_mesh1 = mesh1;
@@ -37,7 +37,6 @@ float LOOP::calculateAlpha(int n){
 
 void LOOP::subdivide() {
 	// scan all vertices and update its coordinates
-
 	int vid = 0;
 	for (MeshVertexIterator viter(m_mesh1); !viter.end(); ++viter){
 		Vertex *v = *viter;
@@ -45,6 +44,8 @@ void LOOP::subdivide() {
 
 		// Crease
 		if (v->boundary()) {
+			//vNew->point() = v->point(); // Linear, blow is quadratic
+
 			std::vector <Point > plist;
 			
 			// find most clw neighbor
@@ -112,7 +113,6 @@ void LOOP::subdivide() {
 	} 
 
 	// Create new faces
-
 	int fid = 0;
 	for (MeshFaceIterator fiter(m_mesh1); !fiter.end(); ++fiter){
 		Face *f = *fiter;
