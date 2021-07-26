@@ -21,6 +21,8 @@ $ make
 ## Usage
 ```
 ./main ../data/bunny.obj output.obj
+
+./main -r 2 ../data/bunny.obj output.obj
 ```
 
 ## Contact
